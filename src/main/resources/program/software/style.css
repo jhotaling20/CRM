@@ -1,0 +1,26 @@
+.root {
+    -fx-font-family: "Arial";
+}
+
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.signin-button {
+    -fx-background-color: #4CAF50; /* Green */
+    -fx-border: none;
+    -fx-color: white;
+    -fx-padding: 10px 20px;
+    -fx-text-align: center;
+    -fx-text-decoration: none;
+    -fx-display: inline-block;
+    -fx-font-size: 16px;
+    -fx-transition-duration: 0.4s;
+    -fx-cursor: pointer;
+}
+
+.signin-button:hover {
+    -fx-background-color: white;
+    -fx-color: black;
+}
