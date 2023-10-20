@@ -1,6 +1,7 @@
 package program.software;
 
 import Databases.TestDatabaseConnection;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Random;
@@ -19,7 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 public class SignupController {
-
+    @FXML
+    public CheckBox hasCompanyIdCheckBox;
     @FXML
     private TextField firstNameField, lastNameField, emailField, companyIdField, companyNameField;
 
@@ -34,42 +37,62 @@ public class SignupController {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+
+
     @FXML
     public void initialize() {
-        signUpButton.setOnAction(event -> handleSignUp());
+        signUpButton.setOnAction(event -> {
+            try {
+                handleSignUp();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        companyIdField.setDisable(true);
+
     }
 
-    public void handleSignUp() {
+    public void handleSignUp() throws Exception {
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String email = emailField.getText();
         String companyId = companyIdField.getText();
         String companyName = companyNameField.getText();
         String password = passwordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
 
-        // Check if companyId is empty and companyName is empty
-        if ((companyId == null || companyId.isEmpty()) && (companyName == null || companyName.isEmpty())) {
-            passwordCriteriaLabel.setText("Company Name is required if Company ID is not provided.");
+        if (!password.equals(confirmPassword)) {
+            passwordCriteriaLabel.setText("Passwords do not match!");
             passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
-            return;
-        }
-
-        // Check if companyId is provided and companyName is not empty
-        if ((companyId != null && !companyId.isEmpty()) && (companyName != null && !companyName.isEmpty())) {
-            passwordCriteriaLabel.setText("Only one of Company ID or Company Name should be provided.");
-            passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
-            return;
+            return; // Exit the method if passwords don't match
         }
 
         if (isValidPassword(password)) {
             password = passwordEncoder.encode(password); // Hash the password
-            if (registerUser(firstName, lastName, email, companyId, companyName, password)) {
-                // Successfully registered
-                passwordCriteriaLabel.setText("Registration successful!");
-                passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
+
+            // Logic to handle registration based on company ID or new company
+            if (hasCompanyIdCheckBox.isSelected() && !companyId.isEmpty()) {
+                // Existing company logic here...
+                // For now, simply registering the user with the given company ID.
+                if (registerUser(firstName, lastName, email, companyId, null, password)) {
+                    passwordCriteriaLabel.setText("Registration successful!");
+                    passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
+                } else {
+                    passwordCriteriaLabel.setText("Registration failed!");
+                    passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
+                }
+            } else if (!companyName.isEmpty()) {
+                // New company logic here...
+                // For now, creating a new company and registering the user.
+                if (registerUser(firstName, lastName, email, null, companyName, password)) {
+                    passwordCriteriaLabel.setText("Registration successful!");
+                    passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
+                } else {
+                    passwordCriteriaLabel.setText("Registration failed!");
+                    passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
+                }
             } else {
-                // Registration failed, handle error
-                passwordCriteriaLabel.setText("Registration failed!");
+                passwordCriteriaLabel.setText("Please provide either a Company ID or a Company Name.");
                 passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
             }
         } else {
@@ -87,61 +110,85 @@ public class SignupController {
 
             byte[] hash = md.digest(dataToHash.getBytes());
 
-            // Take the first 6 bytes of the hash and encode in base64 to get 8 characters
-            byte[] truncatedHash = new byte[6];
-            System.arraycopy(hash, 0, truncatedHash, 0, 6);
-            String base64ID = Base64.getUrlEncoder().withoutPadding().encodeToString(truncatedHash);
-
-            // Add one more character from the hash to make it 9 characters
-            return base64ID + Integer.toHexString(hash[6] & 0xF);
+            // Convert the byte array into a hexadecimal string
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+            // Return the first 9 characters of the hexadecimal string
+            return hexString.toString().substring(0, 9);
 
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
+    private boolean insertCompany(String companyId, String companyName) throws Exception {
+        String sql = "INSERT INTO companies (company_id, company_name) VALUES (?, ?)";
+        try (Connection connection = new TestDatabaseConnection().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, companyId);
+            pstmt.setString(2, companyName);
+            System.out.println("Attempting to insert company_id: " + companyId);
+            if (companyId.length() != 9) {
+                System.err.println("Invalid company_id length: " + companyId.length());
+            }
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean insertUser(String user_ID, String firstName, String lastName, String email, String hashedPassword, String companyId) throws Exception {
+        String sql = "INSERT INTO users (user_id, first_name, last_name, email, password, company_id) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection connection = new TestDatabaseConnection().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, user_ID);
+            pstmt.setString(2, firstName);
+            pstmt.setString(3, lastName);
+            pstmt.setString(4, email);
+            pstmt.setString(5, hashedPassword);
+            pstmt.setString(6, companyId);
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     private boolean registerUser(String firstName, String lastName, String email,
-                                 String companyId, String companyName, String hashedPassword) {
-        String sql;
+                                 String companyId, String companyName, String hashedPassword) throws Exception {
+
         String uniqueData2 = email + firstName + lastName;
         String user_ID = generateHashedID(uniqueData2);
 
         if (companyId == null || companyId.isEmpty()) {
             if (companyName == null || companyName.isEmpty()) {
-                // Neither Company ID nor Company Name is provided (This case should not happen due to the validation in handleSignUp, but it's a safety measure)
                 return false;
             }
+
             // Only Company Name is provided
             String uniqueData = companyName;
             companyId = generateHashedID(uniqueData);
 
-            sql = "INSERT INTO users (user_id, first_name, last_name, email, company_name, password, company_id) VALUES (?, ?, ?, ?, ?, ? , ?)";
-        } else {
-            // Only Company ID is provided
-            sql = "INSERT INTO users (user_id, first_name, last_name, email, password, company_id) VALUES (?, ?, ?, ?, ?, ?)";
-        }
-
-        try (Connection connection = new TestDatabaseConnection().getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
-            pstmt.setString(1, firstName);
-            pstmt.setString(2, lastName);
-            pstmt.setString(3, email);
-            if (companyId == null || companyId.isEmpty()) {
-                pstmt.setString(4, companyName);
-                pstmt.setString(5, hashedPassword);
-            } else {
-                pstmt.setString(4, companyId);
-                pstmt.setString(5, hashedPassword);
+            // Insert new company
+            if (!insertCompany(companyId, companyName)) {
+                return false;
             }
-
-            pstmt.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
+
+        // Insert user
+        return insertUser(user_ID, firstName, lastName, email, hashedPassword, companyId);
     }
+
+
 
     private boolean isValidEmail(String email) {
         String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
@@ -156,4 +203,13 @@ public class SignupController {
         return Pattern.compile(regex).matcher(password).matches();
     }
 
+    public void toggleCompanyId() {
+        if (hasCompanyIdCheckBox.isSelected()) {
+            companyIdField.setDisable(false);
+            companyNameField.setDisable(true);
+        } else {
+            companyIdField.setDisable(true);
+            companyNameField.setDisable(false);
+        }
+    }
 }

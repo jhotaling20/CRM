@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="600.0" stylesheets="@style.css" fx:controller="program.software.SignupController" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox alignment="CENTER" spacing="20" layoutX="150" layoutY="50" prefHeight="400" prefWidth="300">
-        <Label text="Sign Up" styleClass="header-label"/>
-        <TextField fx:id="firstNameField" promptText="First Name"/>
-        <TextField fx:id="lastNameField" promptText="Last Name"/>
-        <TextField fx:id="emailField" promptText="Email"/>
-        <TextField fx:id="companyIdField" promptText="Company ID (optional)"/>
-        <TextField fx:id="companyNameField" promptText="Company Name (optional)"/>
-        <PasswordField fx:id="passwordField" promptText="Password"/>
-        <Label fx:id="passwordCriteriaLabel" text="Password must be at least 10 characters long, include an uppercase letter, a number, and a special character." wrapText="true" styleClass="info-label"/>
-        <Button fx:id="signUpButton" text="Sign Up" styleClass="signin-button"/>
+<AnchorPane prefHeight="500.0" prefWidth="600.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="program.software.SignupController">
+    <VBox alignment="CENTER" layoutX="150" layoutY="8.0" prefHeight="483.0" prefWidth="300" spacing="20">
+        <Label styleClass="header-label" text="Sign Up" />
+        <TextField fx:id="firstNameField" promptText="First Name" />
+        <TextField fx:id="lastNameField" promptText="Last Name" />
+        <TextField fx:id="emailField" promptText="Email" />
+        <VBox spacing="10">
+            <TextField fx:id="companyIdField" promptText="Company ID" />
+            <CheckBox fx:id="hasCompanyIdCheckBox" alignment="TOP_LEFT" onAction="#toggleCompanyId" prefHeight="15.0" prefWidth="239.0" text="Registering with an existing company?">
+            <font>
+               <Font size="10.0" />
+            </font></CheckBox>
+        </VBox>
+        <TextField fx:id="companyNameField" promptText="Company Name" />
+        <PasswordField fx:id="passwordField" promptText="Password" />
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password"/>
+        <Label fx:id="passwordCriteriaLabel" maxWidth="384.0" prefHeight="39.0" prefWidth="300.0" styleClass="info-label" text="Password must be at least 10 characters long, include an uppercase letter, a number, and a special character." wrapText="true" />
+        <Button fx:id="signUpButton" styleClass="signin-button" text="Sign Up" />
     </VBox>
 </AnchorPane>
