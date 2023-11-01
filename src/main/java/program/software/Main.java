@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 public class Main extends Application {
@@ -21,11 +22,11 @@ public class Main extends Application {
 
         if (currentTime - lastLoginTime < THIRTY_DAYS_IN_MILLIS) {
             // Load main UI if last login was within 30 days
-            Parent root = FXMLLoader.load(getClass().getResource("Static_Menu.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Static_Menu.fxml")));
             primaryStage.setScene(new Scene(root));
         } else {
             // Otherwise, show the login screen
-            Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
             primaryStage.setScene(new Scene(root));
         }
         primaryStage.show();

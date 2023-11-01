@@ -3,9 +3,14 @@ package program.software;
 import Databases.TestDatabaseConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -34,8 +39,10 @@ public class SignupController {
 
     @FXML
     private Button signUpButton;
+    @FXML
+    private Hyperlink backButton;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
 
@@ -48,11 +55,19 @@ public class SignupController {
                 throw new RuntimeException(e);
             }
         });
+        backButton.setOnAction(event -> {
+            try {
+                handleBack();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         companyIdField.setDisable(true);
 
     }
 
     public void handleSignUp() throws Exception {
+        boolean success = false;
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String email = emailField.getText();
@@ -76,6 +91,7 @@ public class SignupController {
                 // For now, simply registering the user with the given company ID.
                 if (registerUser(firstName, lastName, email, companyId, null, password)) {
                     passwordCriteriaLabel.setText("Registration successful!");
+                    success = true;
                     passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
                 } else {
                     passwordCriteriaLabel.setText("Registration failed!");
@@ -86,6 +102,7 @@ public class SignupController {
                 // For now, creating a new company and registering the user.
                 if (registerUser(firstName, lastName, email, null, companyName, password)) {
                     passwordCriteriaLabel.setText("Registration successful!");
+                    success = true;
                     passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
                 } else {
                     passwordCriteriaLabel.setText("Registration failed!");
@@ -98,6 +115,9 @@ public class SignupController {
         } else {
             passwordCriteriaLabel.setText("Password does not meet criteria!");
             passwordCriteriaLabel.setStyle("-fx-text-fill: red;");
+        }
+        if (success) {
+            handleBack();
         }
     }
     public static String generateHashedID(String uniqueData) {
@@ -116,7 +136,7 @@ public class SignupController {
                 hexString.append(String.format("%02x", b));
             }
             // Return the first 9 characters of the hexadecimal string
-            return hexString.toString().substring(0, 9);
+            return hexString.substring(0, 9);
 
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -211,5 +231,27 @@ public class SignupController {
             companyIdField.setDisable(true);
             companyNameField.setDisable(false);
         }
+    }
+    public void handleBack() throws Exception{
+        // Transition to the main UI
+        try {
+            // Load new FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+            Parent root = loader.load();
+
+            // Setup the new stage
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root));
+
+            // Close the current stage
+            Stage currentStage = (Stage) backButton.getScene().getWindow(); // currentButton is any control in the current scene
+            currentStage.close();
+
+            // Show the new stage
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -103,6 +103,7 @@ public class LoginController {
     }
 
     public void handleSignUp() {
+        System.out.println("Sign Up clicked"); // Debugging line
         try {
             // Load the Signup.fxml layout
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Signup.fxml"));
