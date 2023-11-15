@@ -24,3 +24,28 @@
     -fx-background-color: white;
     -fx-color: black;
 }
+.sidebar{
+    -fx-background-color: #d2d2d2;
+}
+/* styles.css */
+
+.button-normal {
+    -fx-font-weight: normal;
+    -fx-text-fill: rgb(128, 128, 128);
+}
+
+.button-active {
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+/* Highlight when hovering */
+.button-normal:hover {
+    -fx-background-color: lightgray;
+}
+
+/* Highlight when pressed */
+.button-normal:pressed {
+    -fx-background-color: rgb(128, 128, 128);
+}
+

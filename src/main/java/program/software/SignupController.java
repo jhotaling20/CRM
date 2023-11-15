@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.security.MessageDigest;
@@ -43,6 +44,7 @@ public class SignupController {
     private Hyperlink backButton;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    Company company;
 
 
 
@@ -89,7 +91,9 @@ public class SignupController {
             if (hasCompanyIdCheckBox.isSelected() && !companyId.isEmpty()) {
                 // Existing company logic here...
                 // For now, simply registering the user with the given company ID.
-                if (registerUser(firstName, lastName, email, companyId, null, password)) {
+                if (registerUser(firstName, lastName, email, companyId, companyName, password)) {
+                    company = company.getCompanyFromDatabase(companyId);
+                    company.addUser(new Users(firstName, lastName, email, company));
                     passwordCriteriaLabel.setText("Registration successful!");
                     success = true;
                     passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
@@ -100,8 +104,11 @@ public class SignupController {
             } else if (!companyName.isEmpty()) {
                 // New company logic here...
                 // For now, creating a new company and registering the user.
-                if (registerUser(firstName, lastName, email, null, companyName, password)) {
+                companyId = generateHashedID();
+                if (registerUser(firstName, lastName, email, companyId, companyName, password)) {
                     passwordCriteriaLabel.setText("Registration successful!");
+                    company = new Company(companyName, companyId);
+                    company.addUser(new Users(firstName, lastName, email, company));
                     success = true;
                     passwordCriteriaLabel.setStyle("-fx-text-fill: green;");
                 } else {
@@ -120,27 +127,25 @@ public class SignupController {
             handleBack();
         }
     }
-    public static String generateHashedID(String uniqueData) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+    public static String generateHashedID()  {
+//        MessageDigest md = MessageDigest.getInstance("SHA-256");
+//
+//        // Combine current timestamp, unique data, and a random number
+//        Random secureRandom = new SecureRandom();
+//        String dataToHash = Instant.now().toString() + uniqueData + secureRandom.nextInt();
+//
+//        byte[] hash = md.digest(dataToHash.getBytes());
+//
+//        // Convert the byte array into a hexadecimal string
+//        StringBuilder hexString = new StringBuilder();
+//        for (byte b : hash) {
+//            hexString.append(String.format("%02x", b));
+//        }
+//        // Return the first 9 characters of the hexadecimal string
+//        return hexString.substring(0, 9);
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 9);
 
-            // Combine current timestamp, unique data, and a random number
-            Random secureRandom = new SecureRandom();
-            String dataToHash = Instant.now().toString() + uniqueData + secureRandom.nextInt();
 
-            byte[] hash = md.digest(dataToHash.getBytes());
-
-            // Convert the byte array into a hexadecimal string
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                hexString.append(String.format("%02x", b));
-            }
-            // Return the first 9 characters of the hexadecimal string
-            return hexString.substring(0, 9);
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
     private boolean insertCompany(String companyId, String companyName) throws Exception {
         String sql = "INSERT INTO companies (company_id, company_name) VALUES (?, ?)";
@@ -187,7 +192,7 @@ public class SignupController {
                                  String companyId, String companyName, String hashedPassword) throws Exception {
 
         String uniqueData2 = email + firstName + lastName;
-        String user_ID = generateHashedID(uniqueData2);
+        String user_ID = generateHashedID();
 
         if (companyId == null || companyId.isEmpty()) {
             if (companyName == null || companyName.isEmpty()) {
@@ -196,7 +201,7 @@ public class SignupController {
 
             // Only Company Name is provided
             String uniqueData = companyName;
-            companyId = generateHashedID(uniqueData);
+            companyId = generateHashedID();
 
             // Insert new company
             if (!insertCompany(companyId, companyName)) {

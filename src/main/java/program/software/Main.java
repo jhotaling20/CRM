@@ -19,8 +19,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         long currentTime = System.currentTimeMillis();
         long lastLoginTime = getLastLoginTimestamp();
+        boolean rememberMe = getRememberMeStatus();
 
-        if (currentTime - lastLoginTime < THIRTY_DAYS_IN_MILLIS) {
+
+        if (rememberMe && currentTime - lastLoginTime < THIRTY_DAYS_IN_MILLIS) {
             // Load main UI if last login was within 30 days
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Static_Menu.fxml")));
             primaryStage.setScene(new Scene(root));
@@ -36,6 +38,9 @@ public class Main extends Application {
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         return prefs.getLong("lastLoginTime", 0);
     }
-
+    private boolean getRememberMeStatus() {
+        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        return prefs.getBoolean("rememberMe", false);
+    }
 }
 

@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 
 public class LoginController {
 
+    public CheckBox remember_meCheckBox;
     @FXML
     private TextField usernameField;
 
@@ -64,6 +65,7 @@ public class LoginController {
     private void storeLoginTimestamp() {
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         prefs.putLong("lastLoginTime", System.currentTimeMillis());
+        prefs.putBoolean("rememberMe", rememberMe());
     }
 
 
@@ -120,6 +122,9 @@ public class LoginController {
             e.printStackTrace();
             // Handle the error appropriately, e.g., show an error dialog
         }
+    }
+    public boolean rememberMe(){
+        return remember_meCheckBox.isSelected();
     }
 
 

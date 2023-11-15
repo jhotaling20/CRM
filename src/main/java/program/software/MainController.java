@@ -13,16 +13,22 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Tooltip;
 
 import java.io.IOException;
+import java.util.prefs.Preferences;
+
 public class MainController {
 
     public VBox profileOptions;
     public Hyperlink logOut;
+    public Button loadDashboardButton;
+    public Button loadGeneratorButton;
     @FXML
     private AnchorPane dynamicContentPlaceholder;
     @FXML
     private Button profileButton;
+
     public void fxmlloader(String url){
         try{
             AnchorPane dynamic = FXMLLoader.load(getClass().getResource(url));
@@ -33,6 +39,7 @@ public class MainController {
         }
     }
     public void loadDashboard() {
+
         fxmlloader("Dashboard.fxml");
     }
     public void loadGenerator(){
@@ -53,8 +60,12 @@ public class MainController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(loader.load());
             stage.setScene(scene);
+            Preferences prefs = Preferences.userNodeForPackage(Main.class);
+            prefs.putBoolean("rememberMe", false);
         } catch (IOException e) {
             e.printStackTrace(); // handle exception
         }
     }
+
+
 }
