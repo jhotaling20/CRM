@@ -24,9 +24,9 @@
             </Text>
             <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="3.0" prefHeight="34.0" prefWidth="330.0">
                <children>
-                  <Button fx:id="GenerateFiles" mnemonicParsing="false" style="-fx-background-color: transparent;" styleClass="button-normal" text="Files" />
-                  <Button fx:id="GenerateInvoice" mnemonicParsing="false" style="-fx-background-color: transparent;" styleClass="button-normal" text="Invoice" />
-                  <Button fx:id="GenerateEstimate" mnemonicParsing="false" style="-fx-background-color: transparent;" styleClass="button-normal" text="Estimate" />
+                  <Button fx:id="GenerateFiles" mnemonicParsing="false" styleClass="button-normal" stylesheets="@style.css" text="Files" />
+                  <Button fx:id="GenerateInvoice" mnemonicParsing="false" styleClass="button-normal" stylesheets="@style.css" text="Invoice" />
+                  <Button fx:id="GenerateEstimate" mnemonicParsing="false" styleClass="button-normal" stylesheets="@style.css" text="Estimate" />
                </children>
             </HBox>
          </children>

@@ -6,9 +6,47 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="program.software.EstimateController"
-            prefHeight="400.0" prefWidth="600.0">
+<TabPane tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <tabs>
+        <!-- Invoices Tab -->
+        <Tab text="Invoices">
+            <VBox spacing="10">
+                <TableView fx:id="invoicesTable">
+                    <!-- Table columns for invoices here -->
+                </TableView>
+                <HBox spacing="10">
+                    <Button text="Add Invoice"/>
+                    <Button text="View Invoice"/>
+                    <Button text="Delete Invoice"/>
+                </HBox>
+            </VBox>
+        </Tab>
 
-</AnchorPane>
+        <!-- Estimates Tab -->
+        <Tab text="Estimates">
+            <VBox spacing="10">
+                <TableView fx:id="estimatesTable">
+                    <!-- Table columns for estimates here -->
+                </TableView>
+                <HBox spacing="10">
+                    <Button text="Add Estimate"/>
+                    <Button text="Edit Estimate"/>
+                    <Button text="Delete Estimate"/>
+                </HBox>
+            </VBox>
+        </Tab>
+
+        <!-- Checks Tab -->
+        <Tab text="Checks">
+            <VBox spacing="10">
+                <!-- Form for inputting checks -->
+                <TextField fx:id="checkNumber" promptText="Check Number"/>
+                <DatePicker fx:id="checkDate"/>
+                <TextField fx:id="checkAmount" promptText="Amount"/>
+                <TextField fx:id="payee" promptText="Payee"/>
+                <Button text="Submit Check"/>
+            </VBox>
+        </Tab>
+    </tabs>
+</TabPane>
+

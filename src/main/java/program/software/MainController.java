@@ -32,12 +32,16 @@ public class MainController {
     public void fxmlloader(String url){
         try{
             AnchorPane dynamic = FXMLLoader.load(getClass().getResource(url));
+            AnchorPane.setTopAnchor(dynamic, 0.0);
+            AnchorPane.setBottomAnchor(dynamic, 0.0);
+            AnchorPane.setLeftAnchor(dynamic, 0.0);
+            AnchorPane.setRightAnchor(dynamic, 0.0);
             dynamicContentPlaceholder.getChildren().setAll(dynamic);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public void loadDashboard() {
 
         fxmlloader("Dashboard.fxml");
@@ -66,6 +70,28 @@ public class MainController {
             e.printStackTrace(); // handle exception
         }
     }
+    private void initialize() {
+        // Initialize any necessary logic here
+    }
 
+    public void handleButtonAction(ActionEvent event) {
+        Button btn = (Button) event.getSource();
+        toggleButtonStyle(btn);
+        // Load appropriate content based on the button
+        if (btn.equals(loadDashboardButton)) {
+            loadDashboard();
+        } else if (btn.equals(loadGeneratorButton)) {
+            loadGenerator();
+        }
+        // Add conditions for other buttons if necessary
+    }
+
+    private void toggleButtonStyle(Button button) {
+        if (!button.getStyleClass().contains("button-pressed")) {
+            button.getStyleClass().add("button-pressed");
+        } else {
+            button.getStyleClass().remove("button-pressed");
+        }
+    }
 
 }

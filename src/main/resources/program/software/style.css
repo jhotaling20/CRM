@@ -29,10 +29,21 @@
 }
 /* styles.css */
 
+/* Normal button style */
 .button-normal {
     -fx-font-weight: normal;
     -fx-text-fill: rgb(128, 128, 128);
+    -fx-background-color: transparent;
+    /* Other normal styles */
 }
+
+/* Hover style for buttons */
+.button-normal:hover {
+    -fx-background-color: lightgray;
+    -fx-text-fill: black;
+    /* Other hover styles */
+}
+
 
 .button-active {
     -fx-font-weight: bold;
@@ -46,6 +57,10 @@
 
 /* Highlight when pressed */
 .button-normal:pressed {
-    -fx-background-color: rgb(128, 128, 128);
+    -fx-background-color: transparent; /* Color when pressed */
+    -fx-text-fill: white; /* Text color when pressed */
+    /* Other styles for pressed state */
 }
+
+
 
