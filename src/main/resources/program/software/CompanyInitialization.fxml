@@ -2,42 +2,42 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" prefHeight="600.0" prefWidth="800.0">
-    <VBox spacing="10" padding="10">
-        <Label text="Company Initialization"/>
-
-        <TitledPane text="Company Details" collapsible="false">
-            <GridPane hgap="10" vgap="10">
-                <Label text="Company Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="companyNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                <Label text="Address:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="addressField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                <Label text="Phone Number:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="phoneNumberField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                <Label text="Email:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="emailField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                <Label text="Tax ID Number:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="taxIDField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-            </GridPane>
-        </TitledPane>
-
-        <TitledPane text="Pricing Variables" collapsible="false">
-            <VBox spacing="10">
-                <!-- Add dynamic pricing variable fields here -->
-            </VBox>
-        </TitledPane>
-
-        <TitledPane text="Custom Equations" collapsible="false">
-            <VBox spacing="10">
-                <!-- Add dynamic equation input fields here -->
-            </VBox>
-        </TitledPane>
-
-        <Button text="Save Configuration" fx:id="saveButton"/>
-    </VBox>
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="program.software.MaterialsController" prefHeight="600.0" prefWidth="800.0">
+    <children>
+        <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <content>
+                <VBox spacing="20" fx:id="mainVBox">
+                    <VBox spacing="10" fx:id="materialsVBox">
+                        <Label text="Materials and Costs" style="-fx-font-size: 20;"/>
+                        <HBox spacing="10">
+                            <TextField fx:id="materialNameField" promptText="Material Name"/>
+                            <TextField fx:id="materialCostField" promptText="Cost per unit"/>
+                            <TextField fx:id="materialTimeField" promptText="Time per unit"/>
+                            <Button text="+" onAction="#handleAddMaterial" minWidth="30"/>
+                        </HBox>
+                    </VBox>
+                    <VBox spacing="10" fx:id="jobTypesVBox">
+                        <Label text="Job Types" style="-fx-font-size: 20;"/>
+                        <HBox spacing="10">
+                            <TextField fx:id="jobTypeField" promptText="Job Type"/>
+                            <Button text="+" onAction="#handleAddJobType" minWidth="30"/>
+                        </HBox>
+                    </VBox>
+                    <Button text="Save Variables" onAction="#handleSubmitVariables" maxWidth="Infinity" style="-fx-font-size: 16;"/>
+                    <Separator/>
+                    <VBox spacing="10" fx:id="equationsVBox" visible="false">
+                        <Label text="Create Equation" style="-fx-font-size: 20;"/>
+                        <ComboBox fx:id="jobTypeComboBox" promptText="Select Job Type"/>
+                        <HBox spacing="10">
+                            <ComboBox fx:id="variableComboBox" promptText="Select Variable"/>
+                            <Button text="Add to Equation" onAction="#handleAddToEquation" minWidth="30"/>
+                        </HBox>
+                        <TextArea fx:id="equationTextArea" promptText="Your equation will appear here..." prefHeight="100.0"/>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
 </AnchorPane>

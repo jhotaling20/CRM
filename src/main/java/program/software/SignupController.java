@@ -147,8 +147,8 @@ public class SignupController {
 
 
     }
-    private boolean insertCompany(String companyId, String companyName) throws Exception {
-        String sql = "INSERT INTO companies (company_id, company_name) VALUES (?, ?)";
+    private boolean insertCompany(String companyId, String companyName, boolean intialize) throws Exception {
+        String sql = "INSERT INTO companies (company_id, company_name, initialization) VALUES (?, ?, ?)";
         try (Connection connection = new TestDatabaseConnection().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -193,7 +193,7 @@ public class SignupController {
 
         String uniqueData2 = email + firstName + lastName;
         String user_ID = generateHashedID();
-
+        boolean intialize = false;
         if (companyId == null || companyId.isEmpty()) {
             if (companyName == null || companyName.isEmpty()) {
                 return false;
@@ -204,7 +204,7 @@ public class SignupController {
             companyId = generateHashedID();
 
             // Insert new company
-            if (!insertCompany(companyId, companyName)) {
+            if (!insertCompany(companyId, companyName, intialize)) {
                 return false;
             }
         }
